@@ -160,13 +160,7 @@ class ClimateWidgetConfigureViewModel @AssistedInject constructor(
                     if (selectedEntityId == null) {
                         val first = entityList.firstOrNull()
                         selectedEntityId = first?.entityId
-                        if (first != null && (label.isBlank() || labelFromEntity)) {
-                            val name = first.friendlyName
-                            if (name.isNotBlank()) {
-                                label = name
-                                labelFromEntity = true
-                            }
-                        }
+                        if (first != null) autoPopulateLabelIfNeeded(first.friendlyName)
                     }
                 }
             }
@@ -202,12 +196,9 @@ class ClimateWidgetConfigureViewModel @AssistedInject constructor(
         viewModelScope.launch {
             selectedEntityMutex.withLock {
                 selectedEntityId = entityId
-                if (entityId != null && (label.isBlank() || labelFromEntity)) {
+                if (entityId != null) {
                     val name = entities.value.find { it.entityId == entityId }?.friendlyName ?: ""
-                    if (name.isNotBlank()) {
-                        label = name
-                        labelFromEntity = true
-                    }
+                    autoPopulateLabelIfNeeded(name)
                 }
             }
         }
@@ -216,6 +207,18 @@ class ClimateWidgetConfigureViewModel @AssistedInject constructor(
     fun onLabelChanged(text: String) {
         label = text
         labelFromEntity = false
+    }
+
+    /**
+     * Populates [label] from [friendlyName] when the label has not been manually edited.
+     *
+     * Must be called while holding [selectedEntityMutex].
+     */
+    private fun autoPopulateLabelIfNeeded(friendlyName: String) {
+        if (friendlyName.isNotBlank() && (label.isBlank() || labelFromEntity)) {
+            label = friendlyName
+            labelFromEntity = true
+        }
     }
 
     fun setServer(serverId: Int) {
