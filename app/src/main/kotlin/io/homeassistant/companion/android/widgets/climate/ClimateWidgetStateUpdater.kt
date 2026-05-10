@@ -36,7 +36,8 @@ internal class ClimateWidgetStateUpdater @Inject constructor(
             old.serverId == new.serverId &&
                 old.entityId == new.entityId &&
                 old.backgroundType == new.backgroundType &&
-                old.textColor == new.textColor
+                old.textColor == new.textColor &&
+                old.label == new.label
         }
     }
 

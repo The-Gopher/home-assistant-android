@@ -123,6 +123,31 @@ class ClimateWidgetStateUpdaterTest {
         }
     }
 
+    @Test
+    fun `Given widget label changes in DAO when subscribing to stateFlow then re-emits state with new label`() = runTest {
+        val widgetId = 42
+        val widgetEntity = createWidgetEntity(widgetId = widgetId)
+        val updatedEntity = widgetEntity.copy(label = "Custom Label")
+
+        coEvery { dao.getFlow(widgetId) } returns channelFlow {
+            send(widgetEntity)
+            send(updatedEntity)
+            awaitClose()
+        }
+        coEvery { dao.get(widgetId) } returnsMany listOf(widgetEntity, updatedEntity)
+        coEvery { serverManager.getServer(widgetEntity.serverId) } returns null
+
+        updater.stateFlow(widgetId).test {
+            // initial cached state
+            assertEquals(widgetEntity.toStateWithData(), awaitItem())
+            // out-of-sync from the first widgetEntity emission (no server)
+            assertEquals(widgetEntity.toStateWithData(outOfSync = true), awaitItem())
+            // re-emits with updated label after the label change triggers a new config-change event
+            assertEquals(updatedEntity.toStateWithData(outOfSync = true), awaitItem())
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
     private fun createWidgetEntity(widgetId: Int): ClimateWidgetEntity {
         return ClimateWidgetEntity(
             id = widgetId,
