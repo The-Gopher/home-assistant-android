@@ -11,9 +11,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onCompletion
@@ -69,43 +70,55 @@ internal class ClimateWidgetStateUpdater @Inject constructor(
     fun stateFlow(widgetId: Int): Flow<ClimateWidgetState> {
         val watchForChangeFlow = getWidgetEntityOnConfigurationChange(widgetId)
             .flatMapLatest { widgetEntity ->
-                Timber.d("Climate widget $widgetId watching entity ${widgetEntity.entityId}")
-                val serverId = widgetEntity.serverId
-                val entityId = widgetEntity.entityId
+                flow {
+                    Timber.d("Climate widget $widgetId watching entity ${widgetEntity.entityId}")
+                    val serverId = widgetEntity.serverId
+                    val entityId = widgetEntity.entityId
 
-                getEntityUpdatesFlow(serverId, entityId)
-                    ?.filterNotNull()
-                    ?.distinctUntilChanged()
-                    ?.map { entity ->
-                        val attrs = entity.attributes as? Map<*, *> ?: emptyMap<String, Any>()
-                        val hvacMode = entity.state
-                        val currentTemperature = attrs["current_temperature"]?.toString()
-                        val targetTemperature = attrs["temperature"]?.toString()
-                        val temperatureUnit = attrs["unit_of_measurement"]?.toString()
-                        val entityName = entity.friendlyName
-
-                        climateWidgetDao.updateWidgetCachedState(
-                            widgetId = widgetId,
-                            entityName = entityName,
-                            hvacMode = hvacMode,
-                            currentTemperature = currentTemperature,
-                            targetTemperature = targetTemperature,
-                            temperatureUnit = temperatureUnit,
-                        )
-
-                        ClimateStateWithData(
-                            backgroundType = widgetEntity.backgroundType,
-                            textColor = widgetEntity.textColor,
-                            serverId = serverId,
-                            entityId = entityId,
-                            entityName = entityName,
-                            hvacMode = hvacMode,
-                            currentTemperature = currentTemperature,
-                            targetTemperature = targetTemperature,
-                            temperatureUnit = temperatureUnit,
-                        )
+                    val entityUpdatesFlow = getEntityUpdatesFlow(serverId, entityId)
+                    if (entityUpdatesFlow == null) {
+                        emit(getCurrentCachedState(widgetId = widgetId, fallbackEntity = widgetEntity, outOfSync = true))
+                        return@flow
                     }
-                    ?: flowOf(widgetEntity.toStateWithData())
+
+                    emitAll(
+                        entityUpdatesFlow
+                            .filterNotNull()
+                            .distinctUntilChanged()
+                            .map { entity ->
+                                val attrs = entity.attributes as? Map<*, *> ?: emptyMap<String, Any>()
+                                val hvacMode = entity.state
+                                val currentTemperature = attrs["current_temperature"]?.toString()
+                                val targetTemperature = attrs["temperature"]?.toString()
+                                val temperatureUnit = attrs["unit_of_measurement"]?.toString()
+                                val entityName = entity.friendlyName
+
+                                climateWidgetDao.updateWidgetCachedState(
+                                    widgetId = widgetId,
+                                    entityName = entityName,
+                                    hvacMode = hvacMode,
+                                    currentTemperature = currentTemperature,
+                                    targetTemperature = targetTemperature,
+                                    temperatureUnit = temperatureUnit,
+                                )
+
+                                ClimateStateWithData(
+                                    backgroundType = widgetEntity.backgroundType,
+                                    textColor = widgetEntity.textColor,
+                                    serverId = serverId,
+                                    entityId = entityId,
+                                    entityName = entityName,
+                                    hvacMode = hvacMode,
+                                    currentTemperature = currentTemperature,
+                                    targetTemperature = targetTemperature,
+                                    temperatureUnit = temperatureUnit,
+                                )
+                            },
+                    )
+                }.catch { exception ->
+                    Timber.e(exception, "Error while syncing climate widget $widgetId state")
+                    emit(getCurrentCachedState(widgetId = widgetId, fallbackEntity = widgetEntity, outOfSync = true))
+                }
             }
 
         return merge(getInitialStateFlow(widgetId), watchForChangeFlow).catch {
@@ -115,7 +128,16 @@ internal class ClimateWidgetStateUpdater @Inject constructor(
         }
     }
 
-    private fun ClimateWidgetEntity.toStateWithData(): ClimateStateWithData = ClimateStateWithData(
+    private suspend fun getCurrentCachedState(
+        widgetId: Int,
+        fallbackEntity: ClimateWidgetEntity,
+        outOfSync: Boolean,
+    ): ClimateStateWithData {
+        return climateWidgetDao.get(widgetId)?.toStateWithData(outOfSync = outOfSync)
+            ?: fallbackEntity.toStateWithData(outOfSync = outOfSync)
+    }
+
+    private fun ClimateWidgetEntity.toStateWithData(outOfSync: Boolean = false): ClimateStateWithData = ClimateStateWithData(
         backgroundType = backgroundType,
         textColor = textColor,
         serverId = serverId,
@@ -125,5 +147,6 @@ internal class ClimateWidgetStateUpdater @Inject constructor(
         currentTemperature = currentTemperature,
         targetTemperature = targetTemperature,
         temperatureUnit = temperatureUnit,
+        outOfSync = outOfSync,
     )
 }

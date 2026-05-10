@@ -55,6 +55,7 @@ internal object EmptyClimateState : ClimateWidgetState
  * @param currentTemperature The measured temperature at the entity's location, if available.
  * @param targetTemperature The desired set-point temperature, if available.
  * @param temperatureUnit The temperature unit string (e.g. "°C" or "°F").
+ * @param outOfSync Whether the widget is showing cached data because sync failed.
  */
 internal data class ClimateStateWithData(
     override val backgroundType: WidgetBackgroundType,
@@ -66,4 +67,5 @@ internal data class ClimateStateWithData(
     val currentTemperature: String?,
     val targetTemperature: String?,
     val temperatureUnit: String?,
+    val outOfSync: Boolean = false,
 ) : ClimateWidgetState

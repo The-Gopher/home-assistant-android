@@ -12,12 +12,10 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
-import androidx.glance.LocalContext
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.appWidgetBackground
-import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
@@ -50,7 +48,8 @@ import io.homeassistant.companion.android.widgets.climate.ClimateWidgetState.Com
  * Glance widget that displays the current state of a Home Assistant climate entity.
  *
  * Shows the entity name, current HVAC mode, measured temperature, and set-point
- * temperature. A refresh button allows the user to manually trigger an update.
+ * temperature. When live sync fails, it shows the last cached values with a
+ * cannot-sync indicator.
  *
  * The widget's climate entity and theme are configured via [ClimateWidgetConfigureActivity].
  */
@@ -132,8 +131,8 @@ private fun Screen(state: ClimateStateWithData) {
         titleBar = {
             TitleBar(
                 entityName = state.entityName,
-                serverId = state.serverId,
                 entityId = state.entityId,
+                outOfSync = state.outOfSync,
             )
         },
         modifier = GlanceModifier.climateWidgetBackground().semantics { testTag = "Screen" },
@@ -143,7 +142,7 @@ private fun Screen(state: ClimateStateWithData) {
 }
 
 @Composable
-private fun TitleBar(entityName: String?, serverId: Int, entityId: String) {
+private fun TitleBar(entityName: String?, entityId: String, outOfSync: Boolean) {
     Row(
         modifier = GlanceModifier.padding(top = 12.dp, end = 12.dp, start = 16.dp).fillMaxWidth(),
         verticalAlignment = Alignment.Vertical.CenterVertically,
@@ -154,16 +153,13 @@ private fun TitleBar(entityName: String?, serverId: Int, entityId: String) {
             maxLines = 1,
             modifier = GlanceModifier.defaultWeight().padding(end = 4.dp),
         )
-        CircleIconButton(
-            modifier = GlanceModifier.size(HomeAssistantGlanceTheme.dimensions.iconSize).semantics {
-                testTag = "Refresh"
-            },
-            contentColor = GlanceTheme.colors.primary,
-            imageProvider = ImageProvider(R.drawable.ic_refresh),
-            contentDescription = LocalContext.current.getString(commonR.string.widget_climate_refresh),
-            backgroundColor = GlanceTheme.colors.widgetBackground,
-            onClick = actionRefreshClimate(),
-        )
+        if (outOfSync) {
+            Image(
+                provider = ImageProvider(R.drawable.ic_sync_problem),
+                contentDescription = glanceStringResource(commonR.string.widget_entity_fetch_error),
+                modifier = GlanceModifier.size(16.dp).semantics { testTag = "OutOfSync" },
+            )
+        }
     }
 }
 
@@ -244,6 +240,7 @@ private fun ScreenPreview() {
                 currentTemperature = "20.5",
                 targetTemperature = "22.0",
                 temperatureUnit = "°C",
+                outOfSync = true,
             ),
         )
     }
