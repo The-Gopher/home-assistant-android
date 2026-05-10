@@ -86,7 +86,7 @@ class AdjustTargetTemperatureAction : ActionCallback {
 
     @VisibleForTesting
     fun getStepSize(temperatureUnit: String?): Double {
-        return if (temperatureUnit == "°F") 1.0 else 0.5
+        return 0.1
     }
 
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
