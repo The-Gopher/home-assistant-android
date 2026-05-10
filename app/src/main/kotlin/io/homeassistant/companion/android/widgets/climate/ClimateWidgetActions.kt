@@ -20,9 +20,6 @@ import io.homeassistant.companion.android.database.widget.ClimateWidgetDao
 import io.homeassistant.companion.android.util.sensitive
 import timber.log.Timber
 
-private const val ENTITY_ID_KEY = "entity_id"
-private const val TEMPERATURE_KEY = "temperature"
-
 
 /**
  * Get an Action that will refresh the climate widget once given to Glance.
@@ -65,6 +62,10 @@ class RefreshAction : ActionCallback {
 }
 
 class AdjustTargetTemperatureAction : ActionCallback {
+    private companion object {
+        private const val ENTITY_ID_KEY = "entity_id"
+        private const val TEMPERATURE_KEY = "temperature"
+    }
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
