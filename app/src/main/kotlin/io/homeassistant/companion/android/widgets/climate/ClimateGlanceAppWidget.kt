@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
+import androidx.core.os.ConfigurationCompat
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
@@ -17,6 +18,8 @@ import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.appWidgetBackground
+import androidx.glance.appwidget.components.CircleIconButton
+import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -32,7 +35,6 @@ import androidx.glance.semantics.semantics
 import androidx.glance.semantics.testTag
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
-import androidx.core.os.ConfigurationCompat
 import dagger.hilt.EntryPoint
 import dagger.hilt.EntryPoints
 import dagger.hilt.InstallIn
@@ -44,6 +46,7 @@ import io.homeassistant.companion.android.util.compose.HomeAssistantGlanceTheme
 import io.homeassistant.companion.android.util.compose.HomeAssistantGlanceTypography
 import io.homeassistant.companion.android.util.compose.glanceStringResource
 import io.homeassistant.companion.android.widgets.climate.ClimateWidgetState.Companion.getColors
+import io.homeassistant.companion.android.widgets.todo.actionRefreshTodo
 import java.util.Locale
 
 /**
@@ -129,36 +132,51 @@ private fun EmptyScreen() {
 
 @Composable
 private fun Screen(state: ClimateStateWithData) {
-    Column(
+    Scaffold(
+        titleBar = {
+            TitleBar(
+                name = state.label,
+                outOfSync = state.outOfSync,
+            )
+        },
+        horizontalPadding = 0.dp,
         modifier = GlanceModifier.climateWidgetBackground().semantics { testTag = "Screen" },
     ) {
         ClimateContent(
             state = state,
-            modifier = GlanceModifier.defaultWeight().fillMaxWidth(),
         )
-        BottomLabel(label = state.label, outOfSync = state.outOfSync)
     }
 }
 
+
 @Composable
-private fun BottomLabel(label: String, outOfSync: Boolean) {
+private fun TitleBar(name: String?, outOfSync: Boolean) {
     Row(
-        modifier = GlanceModifier.padding(horizontal = 16.dp, vertical = 8.dp).fillMaxWidth(),
+        modifier = GlanceModifier.padding(top = 12.dp, end = 12.dp, start = 16.dp).fillMaxWidth(),
         verticalAlignment = Alignment.Vertical.CenterVertically,
     ) {
         Text(
-            text = label,
-            style = HomeAssistantGlanceTypography.bodySmall,
+            text = name ?: "Thermostat",
+            style = HomeAssistantGlanceTypography.titleLarge,
             maxLines = 1,
-            modifier = GlanceModifier.defaultWeight().padding(end = 4.dp),
+            modifier = GlanceModifier.padding(end = 4.dp).defaultWeight(),
         )
-        if (outOfSync) {
-            Image(
-                provider = ImageProvider(R.drawable.ic_sync_problem),
-                contentDescription = glanceStringResource(commonR.string.widget_entity_fetch_error),
-                modifier = GlanceModifier.size(16.dp).semantics { testTag = "OutOfSync" },
-            )
-        }
+        CircleIconButton(
+            modifier = GlanceModifier.size(HomeAssistantGlanceTheme.dimensions.iconSize).semantics {
+                testTag = "Refresh"
+            },
+            contentColor = GlanceTheme.colors.primary,
+            imageProvider = if (outOfSync) {
+                ImageProvider(
+                    R.drawable.ic_sync_problem,
+                )
+            } else {
+                ImageProvider(R.drawable.ic_refresh)
+            },
+            contentDescription = "Refresh thermostat",
+            backgroundColor = GlanceTheme.colors.widgetBackground,
+            onClick = actionRefreshClimate(),
+        )
     }
 }
 
@@ -234,6 +252,7 @@ private fun TemperatureRow(labelRes: Int, value: String?, unit: String?) {
         )
     }
 }
+
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(250, 200)
