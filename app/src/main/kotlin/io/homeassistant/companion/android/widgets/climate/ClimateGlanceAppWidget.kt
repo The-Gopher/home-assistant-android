@@ -163,7 +163,7 @@ private fun TitleBar(name: String?, outOfSync: Boolean) {
         )
         CircleIconButton(
             modifier = GlanceModifier.size(HomeAssistantGlanceTheme.dimensions.iconSize).semantics {
-                testTag = "Refresh"
+                testTag = if (outOfSync) "OutOfSync" else "Refresh"
             },
             contentColor = GlanceTheme.colors.primary,
             imageProvider = if (outOfSync) {
@@ -173,7 +173,11 @@ private fun TitleBar(name: String?, outOfSync: Boolean) {
             } else {
                 ImageProvider(R.drawable.ic_refresh)
             },
-            contentDescription = glanceStringResource(commonR.string.widget_climate_refresh),
+            contentDescription = if (outOfSync) {
+                glanceStringResource(commonR.string.widget_entity_fetch_error)
+            } else {
+                glanceStringResource(commonR.string.widget_climate_refresh)
+            },
             backgroundColor = GlanceTheme.colors.widgetBackground,
             onClick = actionRefreshClimate(),
         )
