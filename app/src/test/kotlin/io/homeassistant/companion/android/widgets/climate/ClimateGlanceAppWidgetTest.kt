@@ -112,14 +112,31 @@ class ClimateGlanceAppWidgetTest {
             .assertDoesNotExist()
     }
 
-    private fun createClimateState(outOfSync: Boolean): ClimateStateWithData {
+    @Test
+    fun `Given multi word HVAC mode when ScreenForState then it displays formatted mode`() = runGlanceAppWidgetUnitTest {
+        setContext(context)
+
+        provideComposable {
+            ScreenForState(
+                createClimateState(hvacMode = "heat_cool"),
+            )
+        }
+
+        onNode(hasTextEqualTo("Heat Cool"))
+            .assertExists()
+    }
+
+    private fun createClimateState(
+        outOfSync: Boolean = false,
+        hvacMode: String = "heat",
+    ): ClimateStateWithData {
         return ClimateStateWithData(
             backgroundType = WidgetBackgroundType.DYNAMICCOLOR,
             textColor = null,
             serverId = 1,
             entityId = "climate.living_room",
             entityName = "Living Room",
-            hvacMode = "heat",
+            hvacMode = hvacMode,
             currentTemperature = "20.5",
             targetTemperature = "22.0",
             temperatureUnit = "°C",

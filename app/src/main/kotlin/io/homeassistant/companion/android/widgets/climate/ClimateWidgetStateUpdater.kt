@@ -55,8 +55,9 @@ internal class ClimateWidgetStateUpdater @Inject constructor(
             return null
         }
 
-        val current = serverManager.integrationRepository(serverId).getEntity(entityId)
-        val updates = serverManager.integrationRepository(serverId).getEntityUpdates(listOf(entityId))
+        val integrationRepository = serverManager.integrationRepository(serverId)
+        val current = integrationRepository.getEntity(entityId)
+        val updates = integrationRepository.getEntityUpdates(listOf(entityId))
 
         return updates?.onStart { current?.let { emit(it) } }
     }
