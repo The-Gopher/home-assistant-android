@@ -201,7 +201,7 @@ private fun HvacModeRow(hvacMode: String?) {
         )
         Text(
             text = hvacMode.formatHvacMode(locale = locale),
-            style = HomeAssistantGlanceTypography.bodySmall,
+            style = HomeAssistantGlanceTypography.bodyLarge,
         )
     }
 }
@@ -234,7 +234,7 @@ private fun TemperatureRow(labelRes: Int, value: String?, unit: String?) {
         )
         Text(
             text = if (unit != null) "$value $unit" else value,
-            style = HomeAssistantGlanceTypography.bodySmall,
+            style = HomeAssistantGlanceTypography.bodyLarge,
         )
     }
 }
