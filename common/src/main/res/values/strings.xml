@@ -1033,6 +1033,8 @@
     <string name="widget_climate_mode">Mode</string>
     <string name="widget_climate_current_temperature">Current temperature</string>
     <string name="widget_climate_target_temperature">Target temperature</string>
+    <string name="widget_climate_default_name">Thermostat</string>
+    <string name="widget_climate_refresh">Refresh thermostat</string>
     <string name="widget_climate_decrease_target_temperature">Decrease target temperature</string>
     <string name="widget_climate_increase_target_temperature">Increase target temperature</string>
     <string name="widget_tap_action_label">Tap action:</string>

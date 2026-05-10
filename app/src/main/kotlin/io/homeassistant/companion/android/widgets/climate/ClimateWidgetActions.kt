@@ -14,6 +14,7 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.EntryPoints
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.homeassistant.companion.android.common.data.integration.IntegrationDomains.CLIMATE_DOMAIN
 import io.homeassistant.companion.android.common.data.servers.ServerManager
 import io.homeassistant.companion.android.database.widget.ClimateWidgetDao
 import timber.log.Timber
@@ -114,10 +115,9 @@ class AdjustTargetTemperatureAction : ActionCallback {
 
         val stepSize = getStepSize(widgetEntity.temperatureUnit)
         val updatedTargetTemperature = currentTargetTemperature + (stepSize * direction)
-        val climateDomain = widgetEntity.entityId.substringBefore(delimiter = ".")
 
         serverManager.integrationRepository(widgetEntity.serverId).callAction(
-            domain = climateDomain,
+            domain = CLIMATE_DOMAIN,
             action = "set_temperature",
             actionData = hashMapOf(
                 "entity_id" to widgetEntity.entityId,

@@ -47,7 +47,6 @@ import io.homeassistant.companion.android.util.compose.HomeAssistantGlanceTheme
 import io.homeassistant.companion.android.util.compose.HomeAssistantGlanceTypography
 import io.homeassistant.companion.android.util.compose.glanceStringResource
 import io.homeassistant.companion.android.widgets.climate.ClimateWidgetState.Companion.getColors
-import io.homeassistant.companion.android.widgets.todo.actionRefreshTodo
 import java.util.Locale
 
 /**
@@ -157,7 +156,7 @@ private fun TitleBar(name: String?, outOfSync: Boolean) {
         verticalAlignment = Alignment.Vertical.CenterVertically,
     ) {
         Text(
-            text = name ?: "Thermostat",
+            text = name ?: glanceStringResource(commonR.string.widget_climate_default_name),
             style = HomeAssistantGlanceTypography.titleLarge,
             maxLines = 1,
             modifier = GlanceModifier.padding(end = 4.dp).defaultWeight(),
@@ -174,7 +173,7 @@ private fun TitleBar(name: String?, outOfSync: Boolean) {
             } else {
                 ImageProvider(R.drawable.ic_refresh)
             },
-            contentDescription = "Refresh thermostat",
+            contentDescription = glanceStringResource(commonR.string.widget_climate_refresh),
             backgroundColor = GlanceTheme.colors.widgetBackground,
             onClick = actionRefreshClimate(),
         )
