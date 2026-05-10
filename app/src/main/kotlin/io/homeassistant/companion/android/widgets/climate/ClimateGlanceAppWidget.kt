@@ -20,6 +20,7 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.components.Scaffold
+import androidx.glance.appwidget.components.SquareIconButton
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -192,8 +193,7 @@ private fun ClimateContent(state: ClimateStateWithData, modifier: GlanceModifier
             value = state.currentTemperature,
             unit = state.temperatureUnit,
         )
-        TemperatureRow(
-            labelRes = commonR.string.widget_climate_target_temperature,
+        TargetTemperatureRow(
             value = state.targetTemperature,
             unit = state.temperatureUnit,
         )
@@ -250,6 +250,42 @@ private fun TemperatureRow(labelRes: Int, value: String?, unit: String?) {
             text = if (unit != null) "$value $unit" else value,
             style = HomeAssistantGlanceTypography.bodyLarge,
         )
+    }
+}
+
+@Composable
+private fun TargetTemperatureRow(value: String?, unit: String?) {
+    if (value == null) return
+    Row(
+        modifier = GlanceModifier.padding(vertical = 4.dp).fillMaxWidth(),
+        verticalAlignment = Alignment.Vertical.CenterVertically,
+    ) {
+        Text(
+            text = glanceStringResource(commonR.string.widget_climate_target_temperature),
+            style = HomeAssistantGlanceTypography.bodySmall,
+            modifier = GlanceModifier.defaultWeight(),
+        )
+        Row(verticalAlignment = Alignment.Vertical.CenterVertically) {
+            SquareIconButton(
+                modifier = GlanceModifier.size(24.dp).semantics { testTag = "DecreaseTargetTemperature" },
+                imageProvider = ImageProvider(R.drawable.ic_minus),
+                contentDescription = glanceStringResource(commonR.string.widget_climate_decrease_target_temperature),
+                backgroundColor = GlanceTheme.colors.primary,
+                onClick = actionDecreaseTargetTemperature(),
+            )
+            Text(
+                text = if (unit != null) "$value $unit" else value,
+                style = HomeAssistantGlanceTypography.bodyLarge,
+                modifier = GlanceModifier.padding(horizontal = 8.dp),
+            )
+            SquareIconButton(
+                modifier = GlanceModifier.size(24.dp).semantics { testTag = "IncreaseTargetTemperature" },
+                imageProvider = ImageProvider(R.drawable.ic_plus),
+                contentDescription = glanceStringResource(commonR.string.widget_climate_increase_target_temperature),
+                backgroundColor = GlanceTheme.colors.primary,
+                onClick = actionIncreaseTargetTemperature(),
+            )
+        }
     }
 }
 

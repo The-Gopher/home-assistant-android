@@ -2,6 +2,7 @@ package io.homeassistant.companion.android.widgets.climate
 
 import androidx.glance.appwidget.testing.unit.isIndeterminateCircularProgressIndicator
 import androidx.glance.appwidget.testing.unit.runGlanceAppWidgetUnitTest
+import androidx.glance.testing.unit.assertHasClickAction
 import androidx.glance.testing.unit.assertHasNoClickAction
 import androidx.glance.testing.unit.hasContentDescriptionEqualTo
 import androidx.glance.testing.unit.hasTestTag
@@ -87,6 +88,12 @@ class ClimateGlanceAppWidgetTest {
             .assertExists()
         onNode(hasTextEqualTo("22.0 °C"))
             .assertExists()
+        onNode(hasTestTag("DecreaseTargetTemperature"))
+            .assertExists()
+            .assertHasClickAction()
+        onNode(hasTestTag("IncreaseTargetTemperature"))
+            .assertExists()
+            .assertHasClickAction()
         onNode(hasTestTag("OutOfSync"))
             .assertDoesNotExist()
         onNode(hasTestTag("Refresh"))
