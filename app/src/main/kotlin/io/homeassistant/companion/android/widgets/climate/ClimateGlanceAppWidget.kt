@@ -17,7 +17,6 @@ import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.appWidgetBackground
-import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -130,29 +129,26 @@ private fun EmptyScreen() {
 
 @Composable
 private fun Screen(state: ClimateStateWithData) {
-    Scaffold(
-        titleBar = {
-            TitleBar(
-                entityName = state.entityName,
-                entityId = state.entityId,
-                outOfSync = state.outOfSync,
-            )
-        },
+    Column(
         modifier = GlanceModifier.climateWidgetBackground().semantics { testTag = "Screen" },
     ) {
-        ClimateContent(state)
+        ClimateContent(
+            state = state,
+            modifier = GlanceModifier.defaultWeight().fillMaxWidth(),
+        )
+        BottomLabel(label = state.label, outOfSync = state.outOfSync)
     }
 }
 
 @Composable
-private fun TitleBar(entityName: String?, entityId: String, outOfSync: Boolean) {
+private fun BottomLabel(label: String, outOfSync: Boolean) {
     Row(
-        modifier = GlanceModifier.padding(top = 12.dp, end = 12.dp, start = 16.dp).fillMaxWidth(),
+        modifier = GlanceModifier.padding(horizontal = 16.dp, vertical = 8.dp).fillMaxWidth(),
         verticalAlignment = Alignment.Vertical.CenterVertically,
     ) {
         Text(
-            text = entityName ?: entityId,
-            style = HomeAssistantGlanceTypography.titleLarge,
+            text = label,
+            style = HomeAssistantGlanceTypography.bodySmall,
             maxLines = 1,
             modifier = GlanceModifier.defaultWeight().padding(end = 4.dp),
         )
@@ -167,9 +163,9 @@ private fun TitleBar(entityName: String?, entityId: String, outOfSync: Boolean) 
 }
 
 @Composable
-private fun ClimateContent(state: ClimateStateWithData) {
+private fun ClimateContent(state: ClimateStateWithData, modifier: GlanceModifier = GlanceModifier) {
     Column(
-        modifier = GlanceModifier.padding(horizontal = 16.dp, vertical = 8.dp).fillMaxWidth(),
+        modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.Vertical.CenterVertically,
     ) {
         HvacModeRow(state.hvacMode)
@@ -250,7 +246,7 @@ private fun ScreenPreview() {
                 textColor = null,
                 serverId = 1,
                 entityId = "climate.living_room",
-                entityName = "Living Room",
+                label = "Living Room",
                 hvacMode = "heat",
                 currentTemperature = "20.5",
                 targetTemperature = "22.0",

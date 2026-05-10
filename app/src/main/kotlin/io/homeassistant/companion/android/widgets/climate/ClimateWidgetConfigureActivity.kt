@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -168,7 +169,9 @@ private fun ClimateWidgetConfigureScreen(
         onServerSelected = viewModel::setServer,
         entities = entities,
         selectedEntityId = viewModel.selectedEntityId,
-        onEntitySelected = { viewModel.selectedEntityId = it },
+        onEntitySelected = viewModel::onEntitySelected,
+        label = viewModel.label,
+        onLabelChanged = viewModel::onLabelChanged,
         selectedBackgroundType = viewModel.selectedBackgroundType,
         onBackgroundTypeSelected = { viewModel.selectedBackgroundType = it },
         textColorIndex = viewModel.textColorIndex,
@@ -189,6 +192,8 @@ private fun ClimateWidgetConfigureView(
     entities: List<Entity>,
     selectedEntityId: String?,
     onEntitySelected: (String?) -> Unit,
+    label: String,
+    onLabelChanged: (String) -> Unit,
     selectedBackgroundType: WidgetBackgroundType,
     onBackgroundTypeSelected: (WidgetBackgroundType) -> Unit,
     textColorIndex: Int,
@@ -240,6 +245,14 @@ private fun ClimateWidgetConfigureView(
                 )
             }
 
+            OutlinedTextField(
+                value = label,
+                onValueChange = { onLabelChanged(it) },
+                label = { Text(stringResource(commonR.string.widget_text_hint_label)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+            )
+
             WidgetBackgroundTypeExposedDropdownMenu(
                 current = selectedBackgroundType,
                 onSelected = { onBackgroundTypeSelected(it) },
@@ -280,6 +293,8 @@ private fun ClimateWidgetConfigureViewPreview() {
             entities = listOf(previewEntity1, previewEntity2),
             selectedEntityId = previewEntity1.entityId,
             onEntitySelected = {},
+            label = "Living Room",
+            onLabelChanged = {},
             selectedBackgroundType = WidgetBackgroundType.TRANSPARENT,
             onBackgroundTypeSelected = {},
             textColorIndex = 0,

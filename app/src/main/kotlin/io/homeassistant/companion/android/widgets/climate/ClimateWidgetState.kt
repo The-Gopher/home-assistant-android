@@ -50,8 +50,8 @@ internal object EmptyClimateState : ClimateWidgetState
 /**
  * Widget state that holds all displayable climate entity data.
  *
- * @param label The user-configured label shown at the bottom of the widget.
- * @param entityName The human-readable name of the climate entity.
+ * @param label The resolved display label for the widget (user-configured label, falling back to
+ *   entity friendly name, then entity ID). Always non-null.
  * @param hvacMode The current HVAC mode reported by the entity (e.g. "heat", "cool", "off").
  * @param currentTemperature The measured temperature at the entity's location, if available.
  * @param targetTemperature The desired set-point temperature, if available.
@@ -64,7 +64,6 @@ internal data class ClimateStateWithData(
     val serverId: Int,
     val entityId: String,
     val label: String,
-    val entityName: String?,
     val hvacMode: String?,
     val currentTemperature: String?,
     val targetTemperature: String?,

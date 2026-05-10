@@ -135,7 +135,7 @@ class ClimateGlanceAppWidgetTest {
             textColor = null,
             serverId = 1,
             entityId = "climate.living_room",
-            entityName = "Living Room",
+            label = "Living Room",
             hvacMode = hvacMode,
             currentTemperature = "20.5",
             targetTemperature = "22.0",

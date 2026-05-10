@@ -99,7 +99,7 @@ class ClimateWidgetStateUpdaterTest {
             assertEquals(widgetEntity.toStateWithData(), awaitItem())
             assertEquals(
                 widgetEntity.toStateWithData(
-                    entityName = "Living Room",
+                    label = "Living Room",
                     hvacMode = "heat",
                     currentTemperature = "20.5",
                     targetTemperature = "22.0",
@@ -155,7 +155,7 @@ class ClimateWidgetStateUpdaterTest {
 
     private fun ClimateWidgetEntity.toStateWithData(
         outOfSync: Boolean = false,
-        entityName: String? = this.entityName,
+        label: String = this.label ?: this.entityName ?: this.entityId,
         hvacMode: String? = this.hvacMode,
         currentTemperature: String? = this.currentTemperature,
         targetTemperature: String? = this.targetTemperature,
@@ -166,7 +166,7 @@ class ClimateWidgetStateUpdaterTest {
             textColor = textColor,
             serverId = serverId,
             entityId = entityId,
-            entityName = entityName,
+            label = label,
             hvacMode = hvacMode,
             currentTemperature = currentTemperature,
             targetTemperature = targetTemperature,

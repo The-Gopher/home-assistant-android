@@ -188,12 +188,34 @@ class ClimateWidgetConfigureViewModel @AssistedInject constructor(
                     isUpdateWidget = true
                     selectedServerId = it.serverId
                     selectedEntityId = it.entityId
+                    label = it.label ?: it.entityName ?: ""
+                    labelFromEntity = false
                     selectedBackgroundType = it.backgroundType
                     val colorIndex = supportedTextColors.indexOf(it.textColor)
                     textColorIndex = if (colorIndex == -1) 0 else colorIndex
                 }
             }
         }
+    }
+
+    fun onEntitySelected(entityId: String?) {
+        viewModelScope.launch {
+            selectedEntityMutex.withLock {
+                selectedEntityId = entityId
+                if (entityId != null && (label.isBlank() || labelFromEntity)) {
+                    val name = entities.value.find { it.entityId == entityId }?.friendlyName ?: ""
+                    if (name.isNotBlank()) {
+                        label = name
+                        labelFromEntity = true
+                    }
+                }
+            }
+        }
+    }
+
+    fun onLabelChanged(text: String) {
+        label = text
+        labelFromEntity = false
     }
 
     fun setServer(serverId: Int) {
@@ -244,6 +266,7 @@ class ClimateWidgetConfigureViewModel @AssistedInject constructor(
                 entityId = entityId,
                 backgroundType = selectedBackgroundType,
                 textColor = textColor,
+                label = label.takeIf { it.isNotBlank() },
                 entityName = entity?.friendlyName,
                 hvacMode = entity?.state,
                 currentTemperature = attrs["current_temperature"]?.toString(),
