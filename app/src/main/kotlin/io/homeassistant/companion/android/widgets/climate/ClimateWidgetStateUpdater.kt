@@ -84,7 +84,7 @@ internal class ClimateWidgetStateUpdater @Inject constructor(
                         val temperatureUnit = attrs["unit_of_measurement"]?.toString()
                         val entityName = entity.friendlyName
 
-                        climateWidgetDao.updateWidgetLastUpdate(
+                        climateWidgetDao.updateWidgetCachedState(
                             widgetId = widgetId,
                             entityName = entityName,
                             hvacMode = hvacMode,

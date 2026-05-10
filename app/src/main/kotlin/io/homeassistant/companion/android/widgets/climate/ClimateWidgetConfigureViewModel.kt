@@ -29,6 +29,7 @@ import io.homeassistant.companion.android.database.widget.ClimateWidgetEntity
 import io.homeassistant.companion.android.database.widget.WidgetBackgroundType
 import io.homeassistant.companion.android.widgets.ACTION_APPWIDGET_CREATED
 import io.homeassistant.companion.android.widgets.EXTRA_WIDGET_ENTITY
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -50,6 +51,7 @@ import timber.log.Timber
 class ClimateWidgetConfigureViewModel @AssistedInject constructor(
     private val climateWidgetDao: ClimateWidgetDao,
     private val serverManager: ServerManager,
+    private val clock: Clock,
     @Assisted preSelectedEntityId: String?,
 ) : ViewModel() {
 
@@ -254,7 +256,7 @@ class ClimateWidgetConfigureViewModel @AssistedInject constructor(
                     ClimateWidget::class.java,
                     successCallback = PendingIntent.getBroadcast(
                         context,
-                        System.currentTimeMillis().toInt(),
+                        clock.now().toEpochMilliseconds().toInt(),
                         Intent(context, ClimateWidget::class.java).apply {
                             action = ACTION_APPWIDGET_CREATED
                             putExtra(EXTRA_WIDGET_ENTITY, getPendingDaoEntity())

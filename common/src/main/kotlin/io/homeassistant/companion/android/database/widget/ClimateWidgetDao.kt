@@ -41,7 +41,7 @@ interface ClimateWidgetDao : WidgetDao<ClimateWidgetEntity> {
             "current_temperature = :currentTemperature, target_temperature = :targetTemperature, " +
             "temperature_unit = :temperatureUnit WHERE id = :widgetId",
     )
-    suspend fun updateWidgetLastUpdate(
+    suspend fun updateWidgetCachedState(
         widgetId: Int,
         entityName: String?,
         hvacMode: String?,

@@ -200,11 +200,14 @@ private fun HvacModeRow(hvacMode: String?) {
             modifier = GlanceModifier.defaultWeight(),
         )
         Text(
-            text = hvacMode.split("_").joinToString(" ") { it.replaceFirstChar(Char::uppercaseChar) },
+            text = hvacMode.formatHvacMode(),
             style = HomeAssistantGlanceTypography.bodySmall,
         )
     }
 }
+
+private fun String.formatHvacMode(): String =
+    split("_").joinToString(" ") { it.replaceFirstChar(Char::uppercaseChar) }
 
 @Composable
 private fun TemperatureRow(labelRes: Int, value: String?, unit: String?) {
