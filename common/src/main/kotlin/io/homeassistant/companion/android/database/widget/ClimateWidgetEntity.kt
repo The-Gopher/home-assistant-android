@@ -24,6 +24,8 @@ data class ClimateWidgetEntity(
     override val textColor: String? = null,
     @ColumnInfo(name = "entity_name")
     val entityName: String? = null,
+    @ColumnInfo(name = "label", defaultValue = "NULL")
+    val label: String? = null,
     @ColumnInfo(name = "hvac_mode")
     val hvacMode: String? = null,
     @ColumnInfo(name = "current_temperature")

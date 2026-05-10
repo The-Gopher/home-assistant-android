@@ -140,6 +140,9 @@ class ClimateWidgetConfigureViewModel @AssistedInject constructor(
 
     private val selectedEntityMutex = Mutex()
     var selectedEntityId by mutableStateOf<String?>(preSelectedEntityId)
+    var label by mutableStateOf("")
+        private set
+    private var labelFromEntity = false
     var selectedBackgroundType by mutableStateOf(
         if (DynamicColors.isDynamicColorAvailable()) {
             WidgetBackgroundType.DYNAMICCOLOR
@@ -155,7 +158,15 @@ class ClimateWidgetConfigureViewModel @AssistedInject constructor(
             entities.collect { entityList ->
                 selectedEntityMutex.withLock {
                     if (selectedEntityId == null) {
-                        selectedEntityId = entityList.firstOrNull()?.entityId
+                        val first = entityList.firstOrNull()
+                        selectedEntityId = first?.entityId
+                        if (first != null && (label.isBlank() || labelFromEntity)) {
+                            val name = first.friendlyName
+                            if (name.isNotBlank()) {
+                                label = name
+                                labelFromEntity = true
+                            }
+                        }
                     }
                 }
             }
