@@ -5,6 +5,7 @@ import io.homeassistant.companion.android.common.data.integration.friendlyName
 import io.homeassistant.companion.android.common.data.servers.ServerManager
 import io.homeassistant.companion.android.database.widget.ClimateWidgetDao
 import io.homeassistant.companion.android.database.widget.ClimateWidgetEntity
+import io.homeassistant.companion.android.util.sensitive
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -72,7 +73,11 @@ internal class ClimateWidgetStateUpdater @Inject constructor(
         val watchForChangeFlow = getWidgetEntityOnConfigurationChange(widgetId)
             .flatMapLatest { widgetEntity ->
                 flow {
-                    Timber.d("Climate widget $widgetId watching entity ${widgetEntity.entityId}")
+                    Timber.d(
+                        "Climate widget ${sensitive { widgetId.toString() }} watching entity ${
+                            sensitive(widgetEntity.entityId)
+                        }",
+                    )
                     val serverId = widgetEntity.serverId
                     val entityId = widgetEntity.entityId
 
@@ -123,10 +128,10 @@ internal class ClimateWidgetStateUpdater @Inject constructor(
             }
 
         return merge(getInitialStateFlow(widgetId), watchForChangeFlow).catch { exception ->
-            Timber.e(exception, "Error while watching climate widget $widgetId state")
+            Timber.e(exception, "Error while watching climate widget ${sensitive { widgetId.toString() }} state")
             emit(climateWidgetDao.get(widgetId)?.toStateWithData(outOfSync = true) ?: EmptyClimateState)
         }.onCompletion {
-            Timber.d("Stop watching climate widget $widgetId state")
+            Timber.d("Stop watching climate widget ${sensitive { widgetId.toString() }} state")
         }
     }
 
