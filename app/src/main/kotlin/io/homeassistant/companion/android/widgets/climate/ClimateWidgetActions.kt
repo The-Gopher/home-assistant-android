@@ -17,7 +17,11 @@ import dagger.hilt.components.SingletonComponent
 import io.homeassistant.companion.android.common.data.integration.IntegrationDomains.CLIMATE_DOMAIN
 import io.homeassistant.companion.android.common.data.servers.ServerManager
 import io.homeassistant.companion.android.database.widget.ClimateWidgetDao
+import io.homeassistant.companion.android.util.sensitive
 import timber.log.Timber
+
+private const val ENTITY_ID_KEY = "entity_id"
+private const val TEMPERATURE_KEY = "temperature"
 
 
 /**
@@ -98,7 +102,11 @@ class AdjustTargetTemperatureAction : ActionCallback {
         val widgetEntity = dao.get(appWidgetId)
 
         if (widgetEntity == null) {
-            Timber.w("Aborting climate target temperature action because widget entity is missing for id=$appWidgetId")
+            Timber.w(
+                "Aborting climate target temperature action because widget entity is missing for id=${
+                    sensitive { appWidgetId.toString() }
+                }",
+            )
             return
         }
 
@@ -120,8 +128,8 @@ class AdjustTargetTemperatureAction : ActionCallback {
             domain = CLIMATE_DOMAIN,
             action = "set_temperature",
             actionData = hashMapOf(
-                "entity_id" to widgetEntity.entityId,
-                "temperature" to updatedTargetTemperature,
+                ENTITY_ID_KEY to widgetEntity.entityId,
+                TEMPERATURE_KEY to updatedTargetTemperature,
             ),
         )
 
