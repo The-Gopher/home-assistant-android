@@ -59,7 +59,7 @@ class ClimateGlanceAppWidget : GlanceAppWidget() {
     @EntryPoint
     @InstallIn(SingletonComponent::class)
     internal interface ClimateGlanceWidgetEntryPoint {
-        fun stateUpdater(): ClimateWidgetStateUpdater
+        fun climateStateUpdater(): ClimateWidgetStateUpdater
     }
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
@@ -68,7 +68,7 @@ class ClimateGlanceAppWidget : GlanceAppWidget() {
 
         provideContent {
             val entryPoints = remember { EntryPoints.get(context, ClimateGlanceWidgetEntryPoint::class.java) }
-            val flow = remember { entryPoints.stateUpdater().stateFlow(widgetId) }
+            val flow = remember { entryPoints.climateStateUpdater().stateFlow(widgetId) }
             val state by flow.collectAsState(LoadingClimateState)
 
             HomeAssistantGlanceTheme(colors = state.getColors()) {
