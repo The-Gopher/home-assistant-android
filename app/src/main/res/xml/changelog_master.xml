@@ -3,6 +3,7 @@
     tools:ignore="MissingDefaultResource">
     <release version="2026.5.2 - Main" versioncode="3">
         <change>Bug fixes and dependency updates</change>
+        <change>New: Climate widget — display the state of a climate entity directly on your home screen</change>
     </release>
     <release version="2026.5.2 - Wear" versioncode="2">
         <change>Bug fixes and dependency updates</change>
