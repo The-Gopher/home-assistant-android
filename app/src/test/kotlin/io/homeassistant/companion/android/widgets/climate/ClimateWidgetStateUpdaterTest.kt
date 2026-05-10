@@ -43,6 +43,7 @@ class ClimateWidgetStateUpdaterTest {
             assertEquals(widgetEntity.toStateWithData(), awaitItem())
             assertEquals(widgetEntity.toStateWithData(outOfSync = true), awaitItem())
             expectNoEvents()
+            cancelAndConsumeRemainingEvents()
         }
     }
 
@@ -63,6 +64,7 @@ class ClimateWidgetStateUpdaterTest {
             assertEquals(widgetEntity.toStateWithData(), awaitItem())
             assertEquals(widgetEntity.toStateWithData(outOfSync = true), awaitItem())
             expectNoEvents()
+            cancelAndConsumeRemainingEvents()
         }
     }
 
@@ -106,6 +108,7 @@ class ClimateWidgetStateUpdaterTest {
                 awaitItem(),
             )
             expectNoEvents()
+            cancelAndConsumeRemainingEvents()
         }
 
         coVerify(exactly = 1) {

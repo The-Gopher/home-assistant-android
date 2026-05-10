@@ -12,6 +12,7 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -32,6 +33,7 @@ import androidx.glance.semantics.semantics
 import androidx.glance.semantics.testTag
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
+import androidx.core.os.ConfigurationCompat
 import dagger.hilt.EntryPoint
 import dagger.hilt.EntryPoints
 import dagger.hilt.InstallIn
@@ -187,6 +189,7 @@ private fun ClimateContent(state: ClimateStateWithData) {
 @Composable
 private fun HvacModeRow(hvacMode: String?) {
     if (hvacMode == null) return
+    val locale = ConfigurationCompat.getLocales(LocalContext.current.resources.configuration)[0] ?: Locale.getDefault()
     Row(
         modifier = GlanceModifier.padding(vertical = 4.dp).fillMaxWidth(),
         verticalAlignment = Alignment.Vertical.CenterVertically,
@@ -197,17 +200,17 @@ private fun HvacModeRow(hvacMode: String?) {
             modifier = GlanceModifier.defaultWeight(),
         )
         Text(
-            text = hvacMode.formatHvacMode(),
+            text = hvacMode.formatHvacMode(locale = locale),
             style = HomeAssistantGlanceTypography.bodySmall,
         )
     }
 }
 
-private fun String.formatHvacMode(): String =
+private fun String.formatHvacMode(locale: Locale): String =
     split("_").joinToString(" ") {
         it.replaceFirstChar { char ->
             if (char.isLowerCase()) {
-                char.titlecase(Locale.getDefault())
+                char.titlecase(locale)
             } else {
                 char.toString()
             }
