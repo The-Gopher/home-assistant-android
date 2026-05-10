@@ -50,6 +50,12 @@ internal class ClimateWidgetStateUpdater @Inject constructor(
         }
     }
 
+    /**
+     * Returns a live entity-update flow for the configured climate entity.
+     *
+     * Returns `null` when the widget's server no longer exists, which signals callers to fall
+     * back to cached widget data and show the out-of-sync indicator.
+     */
     private suspend fun getEntityUpdatesFlow(serverId: Int, entityId: String): Flow<Entity?>? {
         if (serverManager.getServer(serverId) == null) {
             Timber.w("Server has been removed and the climate widget needs to be reconfigured")
@@ -67,6 +73,9 @@ internal class ClimateWidgetStateUpdater @Inject constructor(
      * Returns a [Flow] that emits [ClimateWidgetState] updates for the widget identified by
      * [widgetId]. Starts with the last cached state from the database so the widget is never blank,
      * then switches to live server updates whenever the widget is in composition.
+     *
+     * If live sync fails, the returned flow emits the latest cached state with the out-of-sync
+     * flag set. The flow completes when the underlying DAO and entity-update flows complete.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
     fun stateFlow(widgetId: Int): Flow<ClimateWidgetState> {

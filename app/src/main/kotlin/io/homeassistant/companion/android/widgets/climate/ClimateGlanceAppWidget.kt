@@ -206,6 +206,9 @@ private fun HvacModeRow(hvacMode: String?) {
     }
 }
 
+/**
+ * Formats a raw HVAC mode such as `heat_cool` into a title-cased label such as `Heat Cool`.
+ */
 private fun String.formatHvacMode(locale: Locale): String =
     split("_").joinToString(" ") {
         it.replaceFirstChar { char ->
