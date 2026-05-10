@@ -43,6 +43,7 @@ import io.homeassistant.companion.android.util.compose.HomeAssistantGlanceTheme
 import io.homeassistant.companion.android.util.compose.HomeAssistantGlanceTypography
 import io.homeassistant.companion.android.util.compose.glanceStringResource
 import io.homeassistant.companion.android.widgets.climate.ClimateWidgetState.Companion.getColors
+import java.util.Locale
 
 /**
  * Glance widget that displays the current state of a Home Assistant climate entity.
@@ -203,7 +204,15 @@ private fun HvacModeRow(hvacMode: String?) {
 }
 
 private fun String.formatHvacMode(): String =
-    split("_").joinToString(" ") { it.replaceFirstChar(Char::uppercaseChar) }
+    split("_").joinToString(" ") {
+        it.replaceFirstChar { char ->
+            if (char.isLowerCase()) {
+                char.titlecase(Locale.getDefault())
+            } else {
+                char.toString()
+            }
+        }
+    }
 
 @Composable
 private fun TemperatureRow(labelRes: Int, value: String?, unit: String?) {

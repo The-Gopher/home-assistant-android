@@ -121,8 +121,9 @@ internal class ClimateWidgetStateUpdater @Inject constructor(
                 }
             }
 
-        return merge(getInitialStateFlow(widgetId), watchForChangeFlow).catch {
-            Timber.e(it, "Error while watching climate widget $widgetId state")
+        return merge(getInitialStateFlow(widgetId), watchForChangeFlow).catch { exception ->
+            Timber.e(exception, "Error while watching climate widget $widgetId state")
+            emit(climateWidgetDao.get(widgetId)?.toStateWithData(outOfSync = true) ?: EmptyClimateState)
         }.onCompletion {
             Timber.d("Stop watching climate widget $widgetId state")
         }
