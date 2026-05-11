@@ -2,6 +2,7 @@
 <changelog xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingDefaultResource">
     <release version="2026.5.2 - Main" versioncode="3">
+        <change>Add climate widget to view and control climate entities from the home screen</change>
         <change>Bug fixes and dependency updates</change>
     </release>
     <release version="2026.5.2 - Wear" versioncode="2">

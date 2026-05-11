@@ -40,6 +40,8 @@ import io.homeassistant.companion.android.database.widget.ButtonWidgetDao
 import io.homeassistant.companion.android.database.widget.ButtonWidgetEntity
 import io.homeassistant.companion.android.database.widget.CameraWidgetDao
 import io.homeassistant.companion.android.database.widget.CameraWidgetEntity
+import io.homeassistant.companion.android.database.widget.ClimateWidgetDao
+import io.homeassistant.companion.android.database.widget.ClimateWidgetEntity
 import io.homeassistant.companion.android.database.widget.MediaPlayerControlsWidgetDao
 import io.homeassistant.companion.android.database.widget.MediaPlayerControlsWidgetEntity
 import io.homeassistant.companion.android.database.widget.StaticWidgetDao
@@ -50,6 +52,7 @@ import io.homeassistant.companion.android.database.widget.TodoWidgetDao
 import io.homeassistant.companion.android.database.widget.TodoWidgetEntity
 import io.homeassistant.companion.android.database.widget.WidgetBackgroundTypeConverter
 import io.homeassistant.companion.android.database.widget.WidgetTapActionConverter
+import io.homeassistant.companion.android.database.widget.converters.ClimateLastUpdateDataConverter
 
 @Database(
     entities = [
@@ -63,6 +66,7 @@ import io.homeassistant.companion.android.database.widget.WidgetTapActionConvert
         StaticWidgetEntity::class,
         TodoWidgetEntity::class,
         TemplateWidgetEntity::class,
+        ClimateWidgetEntity::class,
         NotificationItem::class,
         LocationHistoryItem::class,
         TileEntity::class,
@@ -74,7 +78,7 @@ import io.homeassistant.companion.android.database.widget.WidgetTapActionConvert
         Server::class,
         Setting::class,
     ],
-    version = 51,
+    version = 52,
     autoMigrations = [
         AutoMigration(from = 24, to = 25),
         AutoMigration(from = 25, to = 26),
@@ -101,6 +105,7 @@ import io.homeassistant.companion.android.database.widget.WidgetTapActionConvert
         AutoMigration(from = 48, to = 49),
         AutoMigration(from = 49, to = 50),
         AutoMigration(from = 50, to = 51),
+        AutoMigration(from = 51, to = 52),
     ],
 )
 @TypeConverters(
@@ -110,6 +115,7 @@ import io.homeassistant.companion.android.database.widget.WidgetTapActionConvert
     SensorSettingTypeConverter::class,
     WidgetBackgroundTypeConverter::class,
     WidgetTapActionConverter::class,
+    ClimateLastUpdateDataConverter::class,
 )
 internal abstract class AppDatabase : RoomDatabase() {
     abstract fun authenticationDao(): AuthenticationDao
@@ -120,6 +126,7 @@ internal abstract class AppDatabase : RoomDatabase() {
     abstract fun staticWidgetDao(): StaticWidgetDao
     abstract fun todoWidgetDao(): TodoWidgetDao
     abstract fun templateWidgetDao(): TemplateWidgetDao
+    abstract fun climateWidgetDao(): ClimateWidgetDao
     abstract fun notificationDao(): NotificationDao
     abstract fun locationHistoryDao(): LocationHistoryDao
     abstract fun tileDao(): TileDao
