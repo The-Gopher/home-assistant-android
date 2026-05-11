@@ -43,6 +43,7 @@ import io.homeassistant.companion.android.util.plus
 import io.homeassistant.companion.android.util.safeBottomPaddingValues
 import io.homeassistant.companion.android.widgets.button.ButtonWidgetConfigureActivity
 import io.homeassistant.companion.android.widgets.camera.CameraWidgetConfigureActivity
+import io.homeassistant.companion.android.widgets.climate.ClimateWidgetConfigureActivity
 import io.homeassistant.companion.android.widgets.entity.EntityWidgetConfigureActivity
 import io.homeassistant.companion.android.widgets.mediaplayer.MediaPlayerControlsWidgetConfigureActivity
 import io.homeassistant.companion.android.widgets.template.TemplateWidgetConfigureActivity
@@ -51,6 +52,7 @@ import io.homeassistant.companion.android.widgets.todo.TodoWidgetConfigureActivi
 enum class WidgetType(val widgetIcon: IIcon) {
     BUTTON(CommunityMaterial.Icon2.cmd_gesture_tap),
     CAMERA(CommunityMaterial.Icon.cmd_camera_image),
+    CLIMATE(CommunityMaterial.Icon3.cmd_temperature_celsius),
     STATE(CommunityMaterial.Icon3.cmd_shape),
     MEDIA(CommunityMaterial.Icon3.cmd_play_box_multiple),
     TEMPLATE(CommunityMaterial.Icon.cmd_code_braces),
@@ -60,6 +62,7 @@ enum class WidgetType(val widgetIcon: IIcon) {
     fun configureActivity() = when (this) {
         BUTTON -> ButtonWidgetConfigureActivity::class.java
         CAMERA -> CameraWidgetConfigureActivity::class.java
+        CLIMATE -> ClimateWidgetConfigureActivity::class.java
         MEDIA -> MediaPlayerControlsWidgetConfigureActivity::class.java
         STATE -> EntityWidgetConfigureActivity::class.java
         TEMPLATE -> TemplateWidgetConfigureActivity::class.java
@@ -89,6 +92,7 @@ fun ManageWidgetsView(viewModel: ManageWidgetsViewModel, modifier: Modifier = Mo
             val availableWidgets = listOf(
                 stringResource(R.string.widget_button_image_description) to WidgetType.BUTTON,
                 stringResource(R.string.widget_camera_description) to WidgetType.CAMERA,
+                stringResource(R.string.climate_widget) to WidgetType.CLIMATE,
                 stringResource(R.string.widget_static_image_description) to WidgetType.STATE,
                 stringResource(R.string.widget_media_player_description) to WidgetType.MEDIA,
                 stringResource(R.string.template_widget) to WidgetType.TEMPLATE,
@@ -122,7 +126,8 @@ fun ManageWidgetsView(viewModel: ManageWidgetsViewModel, modifier: Modifier = Mo
                 viewModel.mediaWidgetList.value.isEmpty() &&
                 viewModel.templateWidgetList.value.isEmpty() &&
                 viewModel.cameraWidgetList.value.isEmpty() &&
-                viewModel.todoWidgetList.value.isEmpty()
+                viewModel.todoWidgetList.value.isEmpty() &&
+                viewModel.climateWidgetList.value.isEmpty()
             ) {
                 item {
                     EmptyState(
@@ -179,6 +184,12 @@ fun ManageWidgetsView(viewModel: ManageWidgetsViewModel, modifier: Modifier = Mo
                 viewModel.todoWidgetList.value,
                 widgetType = WidgetType.TODO,
                 title = R.string.todo_widgets,
+                widgetLabel = { item -> item.entityId },
+            )
+            widgetItems(
+                viewModel.climateWidgetList.value,
+                widgetType = WidgetType.CLIMATE,
+                title = R.string.climate_widgets,
                 widgetLabel = { item -> item.entityId },
             )
         }

@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.homeassistant.companion.android.database.widget.ButtonWidgetDao
 import io.homeassistant.companion.android.database.widget.CameraWidgetDao
+import io.homeassistant.companion.android.database.widget.ClimateWidgetDao
 import io.homeassistant.companion.android.database.widget.MediaPlayerControlsWidgetDao
 import io.homeassistant.companion.android.database.widget.StaticWidgetDao
 import io.homeassistant.companion.android.database.widget.TemplateWidgetDao
@@ -27,6 +28,7 @@ class ManageWidgetsViewModel @Inject constructor(
     cameraWidgetDao: CameraWidgetDao,
     staticWidgetDao: StaticWidgetDao,
     todoWidgetDao: TodoWidgetDao,
+    climateWidgetDao: ClimateWidgetDao,
     mediaPlayerControlsWidgetDao: MediaPlayerControlsWidgetDao,
     templateWidgetDao: TemplateWidgetDao,
     application: Application,
@@ -42,6 +44,7 @@ class ManageWidgetsViewModel @Inject constructor(
     val mediaWidgetList = mediaPlayerControlsWidgetDao.getAllFlow().collectAsState()
     val templateWidgetList = templateWidgetDao.getAllFlow().collectAsState()
     val todoWidgetList = todoWidgetDao.getAllFlow().collectAsState()
+    val climateWidgetList = climateWidgetDao.getAllFlow().collectAsState()
     val supportsAddingWidgets: Boolean
 
     init {
