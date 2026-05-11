@@ -246,6 +246,7 @@
     <string name="entity_picker_add_entity">Add entity</string>
     <string name="entity_widget_desc">View any entity\'s current state and toggle it</string>
     <string name="todo_widget_desc">View any configured to-do list and mark items as completed</string>
+    <string name="climate_widget_desc">View the current state of a climate entity including temperature and HVAC mode</string>
     <string name="error_auth_revoked">It appears that your authorization was revoked, please reconnect to Home Assistant.</string>
     <string name="error_connection_failed">Unable to connect to Home Assistant.</string>
     <string name="error_connection_failed_to">Unable to connect to %1$s</string>
@@ -1027,6 +1028,15 @@
     <string name="widget_todo_label">To-do list</string>
     <string name="widget_todo_empty">You have no to-do items!</string>
     <string name="widget_todo_show_completed">Show completed items</string>
+    <string name="widget_climate_label">Climate</string>
+    <string name="widget_climate_select_entity">Select climate entity</string>
+    <string name="widget_climate_mode">Mode</string>
+    <string name="widget_climate_current_temperature">Current temperature</string>
+    <string name="widget_climate_target_temperature">Target temperature</string>
+    <string name="widget_climate_default_name">Thermostat</string>
+    <string name="widget_climate_refresh">Refresh thermostat</string>
+    <string name="widget_climate_decrease_target_temperature">Decrease target temperature</string>
+    <string name="widget_climate_increase_target_temperature">Increase target temperature</string>
     <string name="widget_tap_action_label">Tap action:</string>
     <string name="widget_tap_action_open">Open</string>
     <string name="widget_tap_action_toggle">Toggle</string>
