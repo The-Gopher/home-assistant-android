@@ -30,7 +30,7 @@ internal class ClimateWidgetStateUpdater @Inject constructor(
     private val serverManager: ServerManager,
 ) {
 
-    private fun getClimateEntityOnConfigurationChange(widgetId: Int): Flow<ClimateWidgetEntity> {
+    private fun observeWidgetConfigurationChanges(widgetId: Int): Flow<ClimateWidgetEntity> {
         return climateWidgetDao.getFlow(widgetId).filterNotNull().distinctUntilChanged { old, new ->
             old.entityId == new.entityId &&
                 old.serverId == new.serverId &&
@@ -61,7 +61,7 @@ internal class ClimateWidgetStateUpdater @Inject constructor(
      */
     @OptIn(ExperimentalCoroutinesApi::class)
     fun stateFlow(widgetId: Int): Flow<ClimateWidgetState> {
-        val watchForChangeFlow = getClimateEntityOnConfigurationChange(widgetId)
+        val watchForChangeFlow = observeWidgetConfigurationChanges(widgetId)
             .flatMapLatest { widgetEntity ->
                 Timber.d("Got a new climate entity to watch $widgetEntity")
                 val serverId = widgetEntity.serverId

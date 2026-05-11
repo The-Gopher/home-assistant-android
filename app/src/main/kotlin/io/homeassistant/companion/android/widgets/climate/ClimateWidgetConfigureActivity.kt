@@ -55,6 +55,7 @@ import io.homeassistant.companion.android.util.previewServer1
 import io.homeassistant.companion.android.util.previewServer2
 import io.homeassistant.companion.android.util.safeBottomWindowInsets
 import io.homeassistant.companion.android.util.safeTopWindowInsets
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -138,6 +139,8 @@ class ClimateWidgetConfigureActivity : BaseActivity() {
             setResult(RESULT_OK)
             viewModel.updateWidget(this@ClimateWidgetConfigureActivity)
             finish()
+        } catch (e: CancellationException) {
+            throw e
         } catch (_: Exception) {
             showUpdateWidgetError()
         }

@@ -263,9 +263,11 @@ class ClimateWidgetConfigureViewModel @AssistedInject constructor(
      * Requests the widget to be pinned to the launcher and waits until the system confirms it has
      * been created. The success callback injects the new [ClimateWidgetEntity] into the DAO.
      *
-     * **Warning**: If the user cancels widget placement this function will not return. Calling the
-     * function multiple times while both are pending will cause both to return when the next widget
-     * is created.
+     * **Warning**: If the user cancels widget placement this function will not return. Callers must
+     * not rely on this function returning in cancellation scenarios, and should bind the call to a
+     * lifecycle scope that will be cancelled if the user navigates away (e.g. [lifecycleScope]).
+     * Calling the function multiple times while both are pending will cause both to return when
+     * the next widget is created.
      */
     suspend fun requestWidgetCreation(context: Context) {
         climateWidgetDao.getWidgetCountFlow().drop(1).onStart {

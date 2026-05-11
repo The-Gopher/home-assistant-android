@@ -13,6 +13,7 @@ import dagger.hilt.components.SingletonComponent
 import io.homeassistant.companion.android.common.data.integration.IntegrationDomains.CLIMATE_DOMAIN
 import io.homeassistant.companion.android.common.data.servers.ServerManager
 import io.homeassistant.companion.android.database.widget.ClimateWidgetDao
+import kotlin.math.roundToInt
 import timber.log.Timber
 
 private val WIDGET_ID_KEY = ActionParameters.Key<Int>("CLIMATE_WIDGET_ID")
@@ -101,7 +102,10 @@ class SetTemperatureAction : ActionCallback {
         }
 
         val currentTarget = lastData.targetTemperature ?: lastData.minTemperature
-        val newTarget = (currentTarget + delta).coerceIn(lastData.minTemperature, lastData.maxTemperature)
+        val step = lastData.temperatureStep
+        // Round to step increments to prevent floating-point drift accumulation over repeated adjustments
+        val newTarget = (((currentTarget + delta) / step).roundToInt() * step)
+            .coerceIn(lastData.minTemperature, lastData.maxTemperature)
 
         serverManager.integrationRepository(widgetEntity.serverId).callAction(
             domain = CLIMATE_DOMAIN,

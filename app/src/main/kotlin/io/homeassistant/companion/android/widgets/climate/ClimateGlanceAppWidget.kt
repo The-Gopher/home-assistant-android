@@ -263,7 +263,7 @@ private fun HvacModeRow(state: ClimateWidgetDataState) {
                         .size(HomeAssistantGlanceTheme.dimensions.iconSize)
                         .semantics { testTag = "CycleMode" },
                     imageProvider = ImageProvider(R.drawable.ic_refresh),
-                    contentDescription = LocalContext.current.getString(commonR.string.widget_climate_open),
+                    contentDescription = LocalContext.current.getString(commonR.string.widget_climate_cycle_hvac_mode),
                     backgroundColor = GlanceTheme.colors.widgetBackground,
                     onClick = actionCycleHvacMode(),
                 )
@@ -282,12 +282,14 @@ private fun HvacModeRow(state: ClimateWidgetDataState) {
     }
 }
 
+private const val TEMPERATURE_DECIMAL_STEP_THRESHOLD = 1f
+
 /**
  * Formats a temperature value to the appropriate number of decimal places based on the step size.
  * For steps smaller than 1 (e.g. 0.5 °C), one decimal place is used; otherwise no decimal places.
  */
 private fun formatTemperature(value: Float, step: Float): String {
-    return if (abs(step) < 1f) "%.1f".format(value) else "%.0f".format(value)
+    return if (abs(step) < TEMPERATURE_DECIMAL_STEP_THRESHOLD) "%.1f".format(value) else "%.0f".format(value)
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)

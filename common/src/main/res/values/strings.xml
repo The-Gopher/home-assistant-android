@@ -1040,6 +1040,7 @@
     <string name="widget_climate_mode">Mode: %1$s</string>
     <string name="widget_climate_no_configuration">No climate entity configured</string>
     <string name="widget_climate_open">Open in app</string>
+    <string name="widget_climate_cycle_hvac_mode">Cycle HVAC mode</string>
     <string name="widget_tap_action_label">Tap action:</string>
     <string name="widget_tap_action_open">Open</string>
     <string name="widget_tap_action_toggle">Toggle</string>
